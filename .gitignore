@@ -1,2 +1,4 @@
 survey_data.csv
 .DS_Store
+survey
+.gitignore

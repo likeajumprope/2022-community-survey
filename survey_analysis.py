@@ -7,6 +7,7 @@ from itertools import zip_longest
 from patsy.contrasts import Treatment
 from pandas.api.types import CategoricalDtype
 from statsmodels.miscmodels.ordinal_model import OrderedModel
+import matplotlib.pyplot as plt
 
 plt.rcParams.update({'font.size': 16})
 sns.set(context='talk', style='white')
@@ -101,33 +102,42 @@ responses = pd.melt(
     var_name='question'
 )
 
+# percentages should not change in long format
+responses.info()
+print(responses["is_member"].value_counts(normalize=True) * 100)
+print(responses["geographic_region"].value_counts(normalize=True) * 100)
+print(responses["career_stage"].value_counts(normalize=True) * 100)
+
 # We'll need to set up a coding scheme for our demographic data
-responses['is_member'] = responses.is_member.astype(bool)
-responses['geographic_region'] = responses.geographic_region.astype('category')
-responses['career_stage'] = responses.career_stage.astype('category')
+#responses['is_member'] = responses.is_member.astype(bool)
+#responses['geographic_region'] = responses.geographic_region.astype('category')
+#responses['career_stage'] = responses.career_stage.astype('category')
 
 # now let's run some basic analyses to check against SurveyMonkey outputs
-responses['is_member'].value_counts(normalize=True)
-responses['geographic_region'].value_counts(normalize=True)
-responses['career_stage'].value_counts(normalize=True)
+#responses['is_member'].value_counts(normalize=True)
+#responses['geographic_region'].value_counts(normalize=True)
+#responses['career_stage'].value_counts(normalize=True)
+
+#responses.head()
+
 
 # first, look at twitter access
-tw = responses.query('question == "twitter_access"')
-tw.dropna(inplace=True)
+#tw = responses.query('question == "twitter_access"')
+#tw.dropna(inplace=True)
 
-levels = [
-    'I don’t use Twitter / NA',
-    'I use Twitter but didn’t know that the OHBM Twitter account exists',
-    'I use Twitter and know about OHBM Twitter, but I don’t follow the account',
-    'I use Twitter, follow the OHBM Twitter account, and occasionally see their tweets',
-    'I use Twitter, follow the OHBM Twitter account, and regularly see their tweets'
-    ]
-cat = CategoricalDtype(categories=levels, ordered=True)
-tw['twitter_use'] = tw.response.astype(cat, copy=False)
+#levels = [
+ #   'I don’t use Twitter / NA',
+  #  'I use Twitter but didn’t know that the OHBM Twitter account exists',
+  #  'I use Twitter and know about OHBM Twitter, but I don’t follow the account',
+#  'I use Twitter, follow the OHBM Twitter account, and occasionally see their tweets',
+ #   'I use Twitter, follow the OHBM Twitter account, and regularly see their tweets'
+#    ]
+#cat = CategoricalDtype(categories=levels, ordered=True)
+#tw['twitter_use'] = tw.response.astype(cat, copy=False)
 
-mod = OrderedModel.from_formula(
-    'twitter_use ~ C(geographic_region, Treatment) + C(career_stage, Treatment)',
-    data=tw)
-res = mod.fit(method='bfgs')
-print(res.summary())
-print(np.exp(res.params))  # odds ratios
+#mod = OrderedModel.from_formula(
+ #   'twitter_use ~ C(geographic_region, Treatment) + C(career_stage, Treatment)',
+  #  data=tw)
+#res = mod.fit(method='bfgs')
+#print(res.summary())
+#print(np.exp(res.params))  # odds ratios
